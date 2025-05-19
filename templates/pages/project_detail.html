@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ project.project_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6 space-y-4">
+        <h1 class="text-3xl font-bold">{{ project.project_name }}</h1>
+
+        <img src="{{ project.image.url }}" alt="Project Image" class="w-full h-64 object-cover rounded-lg">
+
+        <p class="text-gray-700">{{ project.description|default:"No description." }}</p>
+
+        <p class="text-sm text-gray-500">Created at: {{ project.created_at|date:"d M Y H:i" }}</p>
+
+        <!-- Add Stock Button -->
+        <button onclick="document.getElementById('stockModal').classList.remove('hidden')"
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            + Add Stock
+        </button>
+
+        <!-- Stock List -->
+   <h2 class="text-xl font-semibold mt-6">Stocks</h2>
+<ul id="stockList" class="list-disc pl-5 text-gray-800">
+    <li>Loading...</li>
+</ul>
+
+    </div>
+
+    <!-- Modal -->
+    <div id="stockModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md relative">
+            <button onclick="document.getElementById('stockModal').classList.add('hidden')"
+                    class="absolute top-2 right-2 text-gray-500 hover:text-black text-xl">&times;</button>
+
+            <h3 class="text-xl font-semibold mb-4">Add New Stock</h3>
+
+<form id="addStockForm" class="space-y-4">
+    <div>
+        <label class="block text-sm font-medium">Stock Name</label>
+        <input type="text" name="name" required class="w-full border rounded px-3 py-2 mt-1">
+    </div>
+    <div>
+        <label class="block text-sm font-medium">Value</label>
+        <input type="number" name="value" step="0.01" required class="w-full border rounded px-3 py-2 mt-1">
+    </div>
+    <div class="text-right">
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            Save Stock
+        </button>
+    </div>
+</form>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-5 right-5 bg-green-600 text-white px-4 py-2 rounded shadow-lg hidden z-50"></div>
+        </div>
+    </div>
+<script>
+    async function fetchStocks() {
+    const res = await fetch("{% url 'list_stocks_api' %}?project_id={{ project.id }}");
+    const data = await res.json();
+    const container = document.getElementById("stockList");
+    container.innerHTML = "";
+
+    if (data.success) {
+        if (data.stocks.length === 0) {
+            container.innerHTML = "<li class='text-gray-400'>No stocks found.</li>";
+            return;
+        }
+
+        data.stocks.forEach(stock => {
+            const li = document.createElement("li");
+            li.innerHTML = `${stock.name} — <strong>${stock.value}</strong>`;
+            container.appendChild(li);
+        });
+    } else {
+        container.innerHTML = `<li class="text-red-500">${data.error || "Error loading stocks."}</li>`;
+    }
+}
+
+fetchStocks();  // sayfa yüklendiğinde çağır
+document.getElementById('addStockForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const name = form.name.value.trim();
+    const value = form.value.value.trim();
+    const projectId = {{ project.id }};
+
+    if (!name || !value) return;
+
+    const res = await fetch("{% url 'create_stock_api' %}", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, value, project_id: projectId })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        showToast(data.message);
+        form.reset();
+        fetchStocks();  // stokları yeniden getir
+    } else {
+        showToast(data.error || 'Error occurred', true);
+    }
+});
+
+function showToast(message, isError = false) {
+    const toast = document.getElementById('toast');
+    toast.classList.remove('hidden');
+    toast.classList.remove('bg-green-600', 'bg-red-600');
+    toast.classList.add(isError ? 'bg-red-600' : 'bg-green-600');
+    toast.textContent = message;
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 3000);
+}
+</script>
+</body>
+</html>
