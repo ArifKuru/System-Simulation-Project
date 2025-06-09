@@ -7,25 +7,273 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+        .project-header {
+            padding: 1rem 1.5rem;
+        }
 
+        .project-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .project-info h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #212529;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .project-info p {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin: 0.25rem 0 0 0;
+            font-weight: 400;
+        }
+
+        .btn-modern {
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border: none;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-simulate {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-simulate:hover {
+            background: #ffca2c;
+            color: #212529;
+        }
+
+        .btn-reset {
+            background: transparent;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+
+        .btn-reset:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            font-weight: 500;
+        }
+
+        .form-control:focus {
+            border-color: #ffc107;
+            box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+        }
+
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .input-group {
+            max-width: 280px;
+        }
+
+        @media (max-width: 768px) {
+            .project-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .controls-group {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+            }
+
+            .input-group {
+                max-width: 100%;
+            }
+        }
+        @keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+        .stocks-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .stock-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .stock-card:hover {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.1);
+        }
+
+        .stock-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .stock-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #212529;
+            margin: 0 0 0.5rem 0;
+            padding-right: 3rem;
+        }
+
+        .stock-value {
+            color: #6c757d;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+        }
+
+        .loading-skeleton {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-skeleton .skeleton-line {
+            height: 1.1rem;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-skeleton .skeleton-line:last-child {
+            height: 0.95rem;
+            width: 60%;
+            margin-bottom: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @media (max-width: 576px) {
+            .stock-card {
+                padding: 1rem;
+            }
+
+            .stock-name {
+                padding-right: 2.5rem;
+                font-size: 1rem;
+            }
+
+            .delete-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-100 p-6">
+<body class="bg-gray-50 min-h-screen">
+<div class="project-header d-flex justify-content-between align-items-center">
+            <!-- Left side: Project info -->
+            <div class="d-flex align-items-center gap-3">
+                <img src="{{ project.image.url }}"
+                     alt="Project Image"
+                     class="project-image">
 
-<button onclick="runSimulation()" class="btn btn-warning">▶ Simulate</button>
+                <div class="project-info">
+                    <h2>{{ project.project_name }}</h2>
+                    <p>Created at:{{ project.created_at|date:"d M Y H:i" }}</p>
+                </div>
+            </div>
 
-<button onclick="resetStocks()" class="btn btn-outline-danger ms-2">⭯ Reset Stocks</button>
+            <!-- Right side: Controls -->
+            <div class="controls-group">
+                <div class="input-group">
+                    <input type="number"
+                           id="simStepCount"
+                           value="1000"
+                           min="1"
+                           class="form-control"
+                           placeholder="Steps">
+                    <button class="btn btn-modern btn-simulate" onclick="runSimulationSteps()">
+                        ▶
+                    </button>
+                </div>
 
+                <button onclick="resetStocks()" class="btn btn-modern btn-reset">
+                    ⭯
+                </button>
+            </div>
+        </div>
+    <!-- Header with Gradient Border -->
+<div class="h-2" style="
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    height: 0.5rem;
+"></div>
 
 <pre id="simResult" class="mt-3 bg-light p-2 rounded small text-break"></pre>
 
-<div class="input-group my-3" style="max-width: 300px;">
-  <input type="number" id="simStepCount" value="1000" min="1" class="form-control" placeholder="Steps">
-  <button class="btn btn-warning" onclick="runSimulationSteps()">Simulate Steps</button>
-</div>
-<div style="width: 100%; max-width: 1000px; height: 400px; margin: auto;">
+<div style="width: 100%; max-width: 1000px; height: 400px; margin: auto;display: none" id="simChartDiv">
   <canvas id="stockChart"></canvas>
 </div>
-<div class="table-responsive">
+<div class="table-responsive" id="simTableDiv" style="display: none">
   <table id="simTable" class="table table-bordered table-sm text-center align-middle">
     <thead class="table-light">
       <tr>
@@ -42,55 +290,95 @@
 </div>
 
 
-    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6 space-y-4">
-        <h1 class="text-3xl font-bold">{{ project.project_name }}</h1>
-        <img src="{{ project.image.url }}" alt="Project Image" class="w-full h-64 object-cover rounded-lg">
-        <p class="text-gray-700">{{ project.description|default:"No description." }}</p>
-
-        <p class="text-sm text-gray-500">Created at: {{ project.created_at|date:"d M Y H:i" }}</p>
-
+<div class="col-3">
         <!-- Add Stock Button -->
-        <button onclick="document.getElementById('stockModal').classList.remove('hidden')"
-                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            + Add Stock
-        </button>
+   <button class="btn btn-primary ml-4" data-bs-toggle="modal" data-bs-target="#stockModal">
+  + Add Stock
+</button>
+
+   <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#genAiModal">
+  GenAi
+</button>
+
+
+   <div class="stocks-container">
+            <div id="stockList">
+                <!-- Loading skeleton -->
+                <div class="loading-skeleton">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                </div>
+                <div class="loading-skeleton">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                </div>
+                <div class="loading-skeleton">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                </div>
+            </div>
+        </div>
+</div>
+<div class="col-9">
 
         <!-- Stock List -->
-<div id="stockList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    <!-- JS ile kartlar buraya eklenecek -->
+
 </div>
 
-    </div>
-
     <!-- Modal -->
-    <div id="stockModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md relative">
-            <button onclick="document.getElementById('stockModal').classList.add('hidden')"
-                    class="absolute top-2 right-2 text-gray-500 hover:text-black text-xl">&times;</button>
+<div class="modal fade" id="genAiModal" tabindex="-1" aria-labelledby="genAiModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
 
-            <h3 class="text-xl font-semibold mb-4">Add New Stock</h3>
+      <div class="modal-header">
+        <h5 class="modal-title" id="genAiModalLabel">Generate Simulation via AI</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
 
-<form id="addStockForm" class="space-y-4">
-    <div>
-        <label class="block text-sm font-medium">Stock Name</label>
-        <input type="text" name="name" required class="w-full border rounded px-3 py-2 mt-1">
-    </div>
-    <div>
-        <label class="block text-sm font-medium">Value</label>
-        <input type="number" name="value" step="0.01" required class="w-full border rounded px-3 py-2 mt-1">
-    </div>
-    <div class="text-right">
-        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-            Save Stock
-        </button>
-    </div>
-</form>
-<!-- Stock + Events Modal -->
+      <div class="modal-body">
+        <textarea id="genAiPrompt" class="form-control" rows="4" placeholder="Enter your simulation prompt..."></textarea>
+      </div>
 
-<!-- Toast -->
-<div id="toast" class="fixed bottom-5 right-5 bg-green-600 text-white px-4 py-2 rounded shadow-lg hidden z-50"></div>
-        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitGenAiPrompt({{ project.id }})">Submit</button>
+      </div>
+
     </div>
+  </div>
+</div>
+
+  <!-- Bootstrap Modal -->
+<div class="modal fade" id="stockModal" tabindex="-1" aria-labelledby="stockModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="stockModalLabel">Add New Stock</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="addStockForm" class="needs-validation" novalidate>
+          <div class="mb-3">
+            <label class="form-label">Stock Name</label>
+            <input type="text" name="name" required class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Value</label>
+            <input type="number" name="value" step="0.01" required class="form-control">
+          </div>
+          <div class="text-end">
+            <button type="submit" class="btn btn-success">Save Stock</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+    {% include "partials/footer.html" %}
+<div id="toast" class="fixed bottom-5 right-5 z-50 px-4 py-2 text-white rounded shadow-lg hidden transition-opacity duration-300">
+  Toast message goes here
+</div>
 
 </body>
 <div class="modal fade" id="stockDetailModal" tabindex="-1" aria-labelledby="stockDetailLabel" aria-hidden="true">
@@ -98,46 +386,70 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="stockDetailLabel">Stock Detail</h5>
+
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-
         <p id="stockValue">Loading...</p>
 
-        <h6>Events</h6>
-        <ul id="eventList" class="list-group mb-3"></ul>
+        <div id="stockVariables" class="mb-3">
+          <p class="mb-1 fw-bold">Insert Variables:</p>
+          <div id="stockVarsContainer" class="d-flex flex-wrap gap-2"></div>
+        </div>
 
-          <div id="stockVariables" class="mb-3">
-    <p class="mb-1 fw-bold">Insert Variables:</p>
-    <div id="stockVarsContainer" class="d-flex flex-wrap gap-2">
-        <!-- JS ile doldurulacak -->
-    </div>
-</div>
+        <h6 class="fw-bold">Events</h6>
+        <ul id="eventList" class="list-group mb-4"></ul>
 
-
-        <form id="addEventForm" class="row g-2">
+        <!-- Add Event Form -->
+        <form id="addEventForm" class="row g-2 border-top pt-3 mt-3">
           <input type="hidden" name="stock_id" id="eventStockId">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <input type="text" name="name" placeholder="Event Name" required class="form-control">
           </div>
-          <div class="col-md-3">
-            <input type="text" step="0.01" name="possibility" placeholder="Ex: 0.5 or stock('X') * 0.3" required class="form-control"
-            ondrop="onDropVariable(event, this)" ondragover="allowDrop(event)">
-          </div>
-          <div class="col-md-3">
-            <input type="text" name="effect" placeholder="Effect (*2, +5)" required class="form-control"
-             ondrop="onDropVariable(event, this)" ondragover="allowDrop(event)">
+          <div class="col-md-4">
+            <input type="text" name="possibility" placeholder="Ex: 0.5 or stock('X') * 0.3" required class="form-control"
+                   ondrop="onDropVariable(event, this)" ondragover="allowDrop(event)">
           </div>
           <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Add</button>
+            <button type="submit" class="btn btn-success w-100">+ Add Event</button>
           </div>
         </form>
 
       </div>
+        <div class="modal-footer justify-content-end">
+  <span id="deleteAreaStock"></span>
+</div>
+
     </div>
   </div>
 </div>
+
 <script>
+
+    async function submitGenAiPrompt(projectId) {
+    const prompt = document.getElementById("genAiPrompt").value.trim();
+    if (!prompt) {
+        alert("Please enter a prompt.");
+        return;
+    }
+
+    const res = await fetch("/api/generate/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: prompt, project_id: projectId })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        showToast("Simulation generated!");
+        const modal = bootstrap.Modal.getInstance(document.getElementById("genAiModal"));
+        modal.hide();
+        fetchStocks();
+    } else {
+        showToast(data.error || "Generation failed", true);
+    }
+}
 let bootstrapModal;
 
 async function drawStockChart(simResults) {
@@ -204,9 +516,34 @@ async function resetStocks() {
 function openStockModal(stockId) {
     bootstrapModal = new bootstrap.Modal(document.getElementById('stockDetailModal'));
     bootstrapModal.show();
-    loadStockDetail(stockId);
-        loadStockVariables({{ project.id }});
 
+    // Delete butonunu oluştur
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "btn btn-link text-danger";
+    deleteBtn.textContent = "Delete this stock";
+    deleteBtn.onclick = async (e) => {
+        e.stopPropagation();
+        if (!confirm("Are you sure you want to delete this stock?")) return;
+
+        const res = await fetch(`/api/stocks/delete/${stockId}/`, { method: "DELETE" });
+        const data = await res.json();
+        if (data.success) {
+            showToast("Stock deleted");
+            bootstrapModal.hide();
+            fetchStocks();
+        } else {
+            showToast(data.error, true);
+        }
+    };
+
+    // Butonu modal-footer içine yerleştir
+    const deleteArea = document.getElementById("deleteAreaStock");
+    deleteArea.innerHTML = "";
+    deleteArea.appendChild(deleteBtn);
+
+    // Detayları yükle
+    loadStockDetail(stockId);
+    loadStockVariables({{ project.id }});
 }
 
 async function runSimulationSteps() {
@@ -222,23 +559,39 @@ async function runSimulationSteps() {
     tbody.innerHTML = "";
 
     if (data.success) {
+        document.getElementById("simChartDiv").style.display="";
+        document.getElementById("simTableDiv").style.display="";
         data.results.forEach(row => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>${row.step}</td>
-                <td>${row.time}</td>
-                <td>${row.event || "-"}</td>
-                <td>${row.stock || "-"}</td>
-                <td>${row.old_value ?? "-"}</td>
-                <td>${row.new_value ?? "-"}</td>
-            `;
-            tbody.appendChild(tr);
+            if (row.stock_updates && row.stock_updates.length > 0) {
+                row.stock_updates.forEach(update => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${row.step}</td>
+                        <td>${row.time}</td>
+                        <td>${row.event || "-"}</td>
+                        <td>${update.stock_name || "-"}</td>
+                        <td>${update.old_value ?? "-"}</td>
+                        <td>${update.new_value ?? "-"}</td>
+                        <td><code>${update.effect || "-"}</code></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                // Event seçilmemiş veya etki yoksa boş satır
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${row.step}</td>
+                    <td>${row.time}</td>
+                    <td>${row.event || "-"}</td>
+                    <td colspan="4" class="text-muted">No effect</td>
+                `;
+                tbody.appendChild(tr);
+            }
         });
 
-        // 🔥 Burada grafik çizimi yapılır
-        drawStockChart(data.results);
+        drawStockChart(data.results); // Grafik çiz
         showToast(`Simulated ${steps} steps`);
-        fetchStocks();  // güncel stock değerlerini yenile
+        fetchStocks();
     } else {
         showToast(data.error || "Simulation failed", true);
     }
@@ -314,6 +667,7 @@ async function deleteEvent(eventId, stockId) {
 async function loadStockDetail(stockId) {
     const stockRes = await fetch(`/api/stocks/read/${stockId}/`);
     const stockData = await stockRes.json();
+
     if (stockData.success) {
         document.getElementById("stockDetailLabel").textContent = stockData.stock.name;
         document.getElementById("stockValue").textContent = "Value: " + stockData.stock.value;
@@ -326,15 +680,161 @@ async function loadStockDetail(stockId) {
     eventList.innerHTML = "";
 
     if (eventsData.success && eventsData.events.length > 0) {
-        eventsData.events.forEach(ev => {
+        eventsData.events.forEach(async ev => {
             const li = document.createElement("li");
             li.className = "list-group-item";
-            li.innerHTML = `<strong>${ev.name}</strong> — ${ev.effect} (p=${ev.possibility})  <button class="btn btn-sm btn-outline-danger btn-sm float-end" onclick="deleteEvent(${ev.id}, ${stockId})">&times;</button>
-`;
+
+            const effectList = await fetch(`/api/effects/list/?event_id=${ev.id}`).then(r => r.json());
+
+            li.innerHTML = `
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>${ev.name}</strong>
+                  <span class="text-muted">(p=${ev.possibility})</span>
+                </div>
+                <div>
+                  <button class="btn btn-sm btn-outline-primary me-2" onclick="toggleEffectForm(${ev.id})">+</button>
+                  <button class="btn btn-sm btn-outline-danger" onclick="deleteEvent(${ev.id}, ${stockId})">&times;</button>
+                </div>
+              </div>
+
+              <ul class="list-group mt-2" id="effects-of-${ev.id}">
+                ${
+                  (effectList.success && effectList.effects.length > 0)
+                    ? effectList.effects.map(eff => `
+                        <li class="list-group-item py-1 d-flex justify-content-between align-items-center">
+                          ${eff.target_stock} → <code>${eff.effect_expression}</code>
+                          <button class="btn btn-sm btn-danger" onclick="deleteEffect(${eff.id}, ${ev.id})">×</button>
+                        </li>
+                      `).join('')
+                    : `<li class="list-group-item text-muted">No effects</li>`
+                }
+              </ul>
+
+              <form id="addEffectForm-${ev.id}" class="row g-2 mt-2 d-none border-top pt-2">
+                <input type="hidden" name="event_id" value="${ev.id}">
+                <div class="col-md-5">
+                  <select class="form-select" name="target_stock_id" required>
+                    <!-- Stock options will be inserted dynamically -->
+                  </select>
+                </div>
+                <div class="col-md-5">
+                  <input type="text" name="effect_expression" class="form-control" placeholder="e.g. *2 or + stock('X')" required>
+                </div>
+                <div class="col-md-2">
+                  <button type="submit" class="btn btn-success w-100">Add</button>
+                </div>
+              </form>
+            `;
+
             eventList.appendChild(li);
+            await populateStockOptions(`addEffectForm-${ev.id}`);
+            document.getElementById(`addEffectForm-${ev.id}`).addEventListener("submit", handleEffectSubmit);
         });
     } else {
         eventList.innerHTML = "<li class='list-group-item text-muted'>No events.</li>";
+    }
+}
+function toggleEffectForm(eventId) {
+    const form = document.getElementById(`addEffectForm-${eventId}`);
+    form.classList.toggle("d-none");
+}
+
+async function populateStockOptions(formId) {
+    const res = await fetch(`/api/stocks/variables/?project_id={{ project.id }}`);
+    const data = await res.json();
+    const select = document.querySelector(`#${formId} select`);
+
+    select.innerHTML = `<option value="">Select Stock</option>`;
+    if (data.success) {
+        data.variables.forEach((stockName, index) => {
+            const opt = document.createElement("option");
+            opt.value = index + 1;  // gerçek ID yerine dönüyorsa, ID'yi API'den yolla
+            opt.textContent = stockName;
+            select.appendChild(opt);
+        });
+    }
+}
+
+async function handleEffectSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const payload = {
+        event_id: formData.get("event_id"),
+        target_stock_id: formData.get("target_stock_id"),
+        effect_expression: formData.get("effect_expression")
+    };
+
+    const res = await fetch("/api/effects/create/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    if (data.success) {
+        showToast("Effect added");
+        loadStockDetail(document.getElementById("eventStockId").value);
+    } else {
+        showToast(data.error || "Failed to add effect", true);
+    }
+}
+document.getElementById("addEventForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const payload = {
+        stock_id: form.stock_id.value,
+        name: form.name.value,
+        possibility: form.possibility.value
+    };
+
+    const res = await fetch("/api/events/create/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    if (data.success) {
+        showToast("Event created.");
+        form.reset();
+        loadStockDetail(payload.stock_id);
+    } else {
+        showToast(data.error || "Error creating event", true);
+    }
+});
+async function deleteEffect(effectId, eventId) {
+    if (!confirm("Are you sure you want to delete this effect?")) return;
+
+    const res = await fetch(`/api/effects/delete/${effectId}/`, {
+        method: "DELETE"
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        showToast("Effect deleted");
+        // Sadece o eventin effect listesini yenile
+        const effectList = await fetch(`/api/effects/list/?event_id=${eventId}`).then(r => r.json());
+        const ul = document.getElementById(`effects-of-${eventId}`);
+        ul.innerHTML = "";
+
+        if (effectList.success && effectList.effects.length > 0) {
+            effectList.effects.forEach(eff => {
+                const li = document.createElement("li");
+                li.className = "list-group-item py-1 d-flex justify-content-between align-items-center";
+                li.innerHTML = `
+                    ${eff.target_stock} → <code>${eff.effect_expression}</code>
+                    <button class="btn btn-sm btn-danger" onclick="deleteEffect(${eff.id}, ${eventId})">×</button>
+                `;
+                ul.appendChild(li);
+            });
+        } else {
+            ul.innerHTML = `<li class='list-group-item text-muted'>No effects</li>`;
+        }
+    } else {
+        showToast(data.error || "Failed to delete effect", true);
     }
 }
 
@@ -372,38 +872,21 @@ document.getElementById("addEventForm").addEventListener("submit", async functio
 
     if (data.success) {
         if (data.stocks.length === 0) {
-            container.innerHTML = "<li class='text-gray-400'>No stocks found.</li>";
+            container.innerHTML = "<li class='empty-state'>No stocks found.</li>";
             return;
         }
 
         data.stocks.forEach(stock => {
     const card = document.createElement("div");
-    card.className = "bg-white shadow p-4 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 transition";
+    card.className = "stock-card";
     card.innerHTML = `
-        <h3 class="text-lg font-semibold">${stock.name}</h3>
-        <p class="text-gray-700">Value: ${stock.value}</p>
+        <h3 class="stock-name">${stock.name}</h3>
+        <p class="stock-value">Value: ${stock.value}</p>
     `;
 
-const deleteBtn = document.createElement("button");
-deleteBtn.className = "btn btn-sm btn-danger float-end";
-deleteBtn.innerHTML = "&times;";
-deleteBtn.onclick = async (e) => {
-    e.stopPropagation();
-    if (!confirm("Are you sure you want to delete this stock?")) return;
-    const res = await fetch(`/api/stocks/delete/${stock.id}/`, { method: "DELETE" });
-    const data = await res.json();
-    if (data.success) {
-        showToast("Stock deleted");
-        fetchStocks();
-    } else {
-        showToast(data.error, true);
-    }
-};
-
-card.appendChild(deleteBtn);
     card.addEventListener('click', () => openStockModal(stock.id));
     container.appendChild(card);
-});
+    });
     } else {
         container.innerHTML = `<li class="text-red-500">${data.error || "Error loading stocks."}</li>`;
     }

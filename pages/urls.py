@@ -20,6 +20,10 @@ urlpatterns = [
 
     path('api/stocks/reset/<int:project_id>/', views.reset_project_stocks, name='reset_stocks_api'),
 
-
+    path('api/effects/create/', views.create_effect, name='create_effect_api'),
+    path('api/effects/list/', views.list_effects, name='list_effects_api'),
+    path('api/effects/read/<int:effect_id>/', views.read_effect, name='read_effect_api'),
+    path('api/effects/delete/<int:effect_id>/', views.delete_effect, name='delete_effect_api'),
+    path('api/generate/', views.generate_simulation_from_prompt, name='generate_simulation'),
 
 ]
